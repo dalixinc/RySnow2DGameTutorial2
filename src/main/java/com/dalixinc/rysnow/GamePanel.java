@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable{
+    private static final int FPS = 60;  // Frames per second
 
     // SCREEN SETTINGS
 
@@ -16,14 +17,24 @@ public class GamePanel extends JPanel implements Runnable{
     final int screenWidth = tileSize * maxScreenCol; // 768 pixels
     final int screenHeight = tileSize * maxScreenRow; // 576 pixels
 
-
+    KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
+
+
+    // Set Player's initial position
+    int playerX = 100;
+    int playerY = 100;
+    int playerSpeed = 4;
+
 
     public GamePanel() {
 
         this.setPreferredSize( new Dimension( screenWidth, screenHeight ) );
         this.setBackground( Color.BLACK );
         this.setDoubleBuffered( true );
+        this.addKeyListener( keyHandler );
+        this.setFocusable( true );
+
 
     }
 
@@ -38,20 +49,47 @@ public class GamePanel extends JPanel implements Runnable{
         // Game Loop
 
         // 1 UPDATE: update information like player position, enemy position, etc.
-        update();
+        // update();
 
         // 2 RENDER: render the game state to the screen
-        repaint();
+        //repaint();
 
-        long count = 0;
+        double drawInterval = 1_000_000_000 / FPS;   // 0.01666 seconds (16.7 ms)
+        double nextDrawTime = System.nanoTime() + drawInterval;
+
+
+       /// long count = 0;
         while( gameThread != null ) {
+            update();
+            repaint();
+            try {
+                double remainingTime = nextDrawTime - System.nanoTime();
+                if( remainingTime < 0 ) {remainingTime = 0;}     // Prevent negative time (Safety Valve)
 
-            System.out.println( "Game Loop is running!!!! " + count++ );
+                Thread.sleep( (long) (remainingTime / 1_000_000) );
+                nextDrawTime += drawInterval;
+
+            } catch (InterruptedException e) {
+                //e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+
+            /// System.out.println( "Game Loop is running!!!! " + count++ );
         }
     }
 
     public void update() {
         // Update game state
+
+        if( keyHandler.upPressed == true ) {
+            playerY -= playerSpeed;
+        } else if( keyHandler.downPressed == true ) {
+            playerY += playerSpeed;
+        } else if( keyHandler.leftPressed == true ) {
+            playerX -= playerSpeed;
+        } else if( keyHandler.rightPressed == true ) {
+            playerX += playerSpeed;
+        }
     }
     public void paintComponent( Graphics g ) {
         super.paintComponent( g );
@@ -59,7 +97,7 @@ public class GamePanel extends JPanel implements Runnable{
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.setColor( Color.WHITE );
-        g2d.fillRect( 100, 100, tileSize, tileSize);
+        g2d.fillRect( playerX, playerY, tileSize, tileSize);
         g2d.dispose();
 
     }
