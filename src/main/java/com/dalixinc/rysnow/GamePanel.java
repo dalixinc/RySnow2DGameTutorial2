@@ -43,8 +43,9 @@ public class GamePanel extends JPanel implements Runnable{
         gameThread.start();
     }
 
-    @Override
-    public void run() {
+    // The sleep method of loop tinimg is not recommended for games
+    //// @Override
+    public void runSleep() {
 
         // Game Loop
 
@@ -77,6 +78,50 @@ public class GamePanel extends JPanel implements Runnable{
             /// System.out.println( "Game Loop is running!!!! " + count++ );
         }
     }
+
+    // Alternative to run() method (Delta/Accumulator)
+
+     @Override
+     public void run() {
+
+        // Timer Vars
+        double drawInterval = 1_000_000_000 / FPS;   // 0.01666 seconds (16.7 ms)
+        double delta = 0;
+        long lastTime = System.nanoTime();
+        long currentTime;
+
+        // "Proof" Vars
+        //// long count = 0;
+        long timer = 0;
+        int drawCount = 0;
+
+        // Game Loop
+        while( gameThread != null ) {
+            currentTime = System.nanoTime();
+            delta += (currentTime - lastTime) / drawInterval;
+            timer += (currentTime - lastTime);
+            lastTime = currentTime;
+
+            //// System.out.println( "Count: " + count++ + "  Delta: " + delta);
+
+            if ( delta >= 1 ) {
+                update();
+                repaint();
+                delta--;
+                drawCount++;
+                //// System.out.println( "Delta Final: " + delta);
+                //// System.exit(0);
+            }
+
+            if ( timer >= 1_000_000_000 ) {
+                System.out.println( "FPS: " + drawCount );
+                drawCount = 0;
+                timer = 0;
+            }
+        }
+     }
+
+
 
     public void update() {
         // Update game state
