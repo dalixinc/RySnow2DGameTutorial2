@@ -1,6 +1,7 @@
 package com.dalixinc.rysnow;
 
 import com.dalixinc.rysnow.entity.Player;
+import com.dalixinc.rysnow.tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,20 +15,16 @@ public class GamePanel extends JPanel implements Runnable{
     final int  scale = 3;               // 3x scale
 
     public final int tileSize = originalTileSize * scale;  // 48 x 48 pixels
-    final int maxScreenCol = 16;                    // 16 columns
-    final int maxScreenRow = 12;                    // 12 rows
-    final int screenWidth = tileSize * maxScreenCol; // 768 pixels
-    final int screenHeight = tileSize * maxScreenRow; // 576 pixels
+    public final int maxScreenCol = 16;                    // 16 columns
+    public final int maxScreenRow = 12;                    // 12 rows
+    public final int screenWidth = tileSize * maxScreenCol; // 768 pixels
+    public final int screenHeight = tileSize * maxScreenRow; // 576 pixels
 
+    // GAME SETTINGS
     KeyHandler keyHandler = new KeyHandler();
+    TileManager tileManager = new TileManager(this);
     Thread gameThread;
     Player player = new Player(this, keyHandler);
-
-
-    // Set Player's initial position
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4;
 
 
     public GamePanel() {
@@ -148,6 +145,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2d = (Graphics2D) g;
 
+        tileManager.draw(g2d);
         player.draw(g2d);
         // For Test only
 /*        g2d.setColor( Color.WHITE );
