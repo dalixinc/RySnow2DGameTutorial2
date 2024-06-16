@@ -1,5 +1,7 @@
 package com.dalixinc.rysnow;
 
+import com.dalixinc.rysnow.entity.Player;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -11,7 +13,7 @@ public class GamePanel extends JPanel implements Runnable{
     final int originalTileSize = 16;   // 16 x 16 tiles
     final int  scale = 3;               // 3x scale
 
-    final int tileSize = originalTileSize * scale;  // 48 x 48 pixels
+    public final int tileSize = originalTileSize * scale;  // 48 x 48 pixels
     final int maxScreenCol = 16;                    // 16 columns
     final int maxScreenRow = 12;                    // 12 rows
     final int screenWidth = tileSize * maxScreenCol; // 768 pixels
@@ -19,6 +21,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
+    Player player = new Player(this, keyHandler);
 
 
     // Set Player's initial position
@@ -126,7 +129,11 @@ public class GamePanel extends JPanel implements Runnable{
     public void update() {
         // Update game state
 
-        if( keyHandler.upPressed == true ) {
+        player.update();
+
+
+        // For Test Alone
+/*        if( keyHandler.upPressed == true ) {
             playerY -= playerSpeed;
         } else if( keyHandler.downPressed == true ) {
             playerY += playerSpeed;
@@ -134,15 +141,17 @@ public class GamePanel extends JPanel implements Runnable{
             playerX -= playerSpeed;
         } else if( keyHandler.rightPressed == true ) {
             playerX += playerSpeed;
-        }
+        }*/
     }
     public void paintComponent( Graphics g ) {
         super.paintComponent( g );
 
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.setColor( Color.WHITE );
-        g2d.fillRect( playerX, playerY, tileSize, tileSize);
+        player.draw(g2d);
+        // For Test only
+/*        g2d.setColor( Color.WHITE );
+        g2d.fillRect( playerX, playerY, tileSize, tileSize);*/
         g2d.dispose();
 
     }
