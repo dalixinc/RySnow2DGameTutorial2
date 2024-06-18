@@ -19,10 +19,10 @@ public class TileManager  {
         this.gamePanel = gamePanel;
 
         tile = new Tile[10];
-        mapTileNum = new int[gamePanel.maxScreenCol][gamePanel.maxScreenRow];
+        mapTileNum = new int[gamePanel.maxWorldCol][gamePanel.maxWorldCol];
 
         getTileImage();
-        loadMap("/maps/map01.txt");
+        loadMap("/maps/world01.txt");
     }
 
     public void getTileImage() {
@@ -36,6 +36,14 @@ public class TileManager  {
             tile[2] = new Tile();
             tile[2].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/water.png"));
 
+            tile[3] = new Tile();
+            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/earth.png"));
+
+            tile[4] = new Tile();
+            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/tree.png"));
+
+            tile[5] = new Tile();
+            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/sand.png"));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,17 +58,17 @@ public class TileManager  {
             int col = 0;
             int row = 0;
 
-            while(col < gamePanel.maxScreenCol && gamePanel.maxScreenRow > row) {
+            while(col < gamePanel.maxWorldCol && gamePanel.maxWorldRow > row) {
                 String line = br.readLine();
 
-                while (col < gamePanel.maxScreenCol ) {
+                while (col < gamePanel.maxWorldCol ) {
                     String[] tokens = line.split(" ");
                     int num = Integer.parseInt(tokens[col]);
 
                     mapTileNum[col][row] = num;
                     col++;
                 }
-                if (col == gamePanel.maxScreenCol) {
+                if (col == gamePanel.maxWorldCol) {
                     col = 0;
                     row++;
                 }
@@ -77,24 +85,31 @@ public class TileManager  {
         g2d.drawImage(tile[1].image, 48, 0, gamePanel.tileSize, gamePanel.tileSize, null);
         g2d.drawImage(tile[2].image, 96, 0, gamePanel.tileSize, gamePanel.tileSize, null);*/
 
-        int row = 0;
-        int col = 0;
-        int x = 0;
-        int y = 0;
+        int worldCol = 0;
+        int worldRow = 0;
 
-        while(col < gamePanel.maxScreenCol && gamePanel.maxScreenRow > row) {
+        while(worldCol < gamePanel.maxWorldCol && gamePanel.maxWorldRow > worldRow) {
 
-            int tn = mapTileNum[col][row];
+            int tn = mapTileNum[worldCol][worldRow];
 
-            g2d.drawImage(tile[tn].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null);
-            col++;
-            x += gamePanel.tileSize;
+            int worldX = worldCol * gamePanel.tileSize;
+            int worldY = worldRow * gamePanel.tileSize;
+            int screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;    ////gamePanel.screenWidth / 2 - gamePanel.tileSize / 2;
+            int screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;    ////gamePanel.screenHeight / 2 - gamePanel.tileSize / 2;
 
-            if(col == gamePanel.maxScreenCol) {
-                col = 0;
-                x = 0;
-                row++;
-                y += gamePanel.tileSize;
+            if(     worldX + gamePanel.tileSize > gamePanel.player.worldX -gamePanel.player.screenX  &&
+                    worldX - gamePanel.tileSize  < gamePanel.player.worldX + gamePanel.player.screenX &&
+                    worldY + gamePanel.tileSize > gamePanel.player.worldY - gamePanel.player.screenY &&
+                    worldY - gamePanel.tileSize < gamePanel.player.worldY + gamePanel.player.screenY ) {
+                g2d.drawImage(tile[tn].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+            }
+
+           //// - g2d.drawImage(tile[tn].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+            worldCol++;
+
+            if(worldCol == gamePanel.maxWorldCol) {
+                worldCol = 0;
+                worldRow++;
             }
         }
 
