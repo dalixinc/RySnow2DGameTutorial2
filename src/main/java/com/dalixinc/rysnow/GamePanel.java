@@ -1,6 +1,7 @@
 package com.dalixinc.rysnow;
 
 import com.dalixinc.rysnow.entity.Player;
+import com.dalixinc.rysnow.object.SuperObject;
 import com.dalixinc.rysnow.tile.TileManager;
 
 import javax.swing.*;
@@ -29,8 +30,10 @@ public class GamePanel extends JPanel implements Runnable{
     KeyHandler keyHandler = new KeyHandler();
     TileManager tileManager = new TileManager(this);
     public CollisionChecker collisionChecker = new CollisionChecker(this);
+    public AssetSetter assetSetter = new AssetSetter(this);
     Thread gameThread;
     public Player player = new Player(this, keyHandler);
+    public SuperObject[] superObjects = new SuperObject[10];
 
 
     public GamePanel() {
@@ -40,6 +43,10 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered( true );
         this.addKeyListener( keyHandler );
         this.setFocusable( true );
+    }
+
+    public void setUpGame() {
+        assetSetter.setObjects();
     }
 
     public void startGameThread() {
@@ -150,11 +157,23 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2d = (Graphics2D) g;
 
+        // DRAW TILES
         tileManager.draw(g2d);
+
+        //  DRAW OBJECTS
+        for (int i = 0; i < superObjects.length; i++) {
+            if (superObjects[i] != null) {
+                superObjects[i].draw(g2d, this);
+            }
+        }
+
+        // DRAW PLAYER
         player.draw(g2d);
+
         // For Test only
-/*        g2d.setColor( Color.WHITE );
-        g2d.fillRect( playerX, playerY, tileSize, tileSize);*/
+        /*  g2d.setColor( Color.WHITE );
+            g2d.fillRect( playerX, playerY, tileSize, tileSize);*/
+
         g2d.dispose();
 
     }
