@@ -25,11 +25,10 @@ public class GamePanel extends JPanel implements Runnable{
     public final  int worldWidth = tileSize * maxWorldCol;
     public final int worldHeight = tileSize * maxWorldRow;
 
-
-
     // GAME SETTINGS
     KeyHandler keyHandler = new KeyHandler();
     TileManager tileManager = new TileManager(this);
+    public CollisionChecker collisionChecker = new CollisionChecker(this);
     Thread gameThread;
     public Player player = new Player(this, keyHandler);
 
@@ -41,8 +40,6 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered( true );
         this.addKeyListener( keyHandler );
         this.setFocusable( true );
-
-
     }
 
     public void startGameThread() {

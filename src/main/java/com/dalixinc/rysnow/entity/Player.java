@@ -22,14 +22,17 @@ public class Player extends Entity {
 
         screenX = gamePanel.screenWidth / 2 - gamePanel.tileSize / 2;
         screenY = gamePanel.screenHeight / 2 - gamePanel.tileSize / 2;  //2nd bit?
+
+        solidArea = new Rectangle(8, 16, 32, 32);
+
         setDefaultValues();
         getPlayerImage();
     }
 
     public void setDefaultValues() {
-        worldX = gamePanel.tileSize * 27;
+        worldX = gamePanel.tileSize * 25;
         worldY = gamePanel.tileSize * 22;
-        speed = 4;
+        speed = 6;
         direction = "down";
     }
 
@@ -52,24 +55,44 @@ public class Player extends Entity {
     public void update() {
 
         boolean animateWhenStill = true;
-        /// animateWhenStill= keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
-
+        // animateWhenStill= keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
         if (animateWhenStill) {
+
+            boolean keyIsPressed = keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
+
             if (keyHandler.upPressed) {
                 direction = "up";
-                worldY -= speed;
             }
             if (keyHandler.downPressed) {
                 direction = "down";
-                worldY += speed;
             }
             if (keyHandler.leftPressed) {
                 direction = "left";
-                worldX -= speed;
             }
             if (keyHandler.rightPressed) {
                 direction = "right";
-                worldX += speed;
+            }
+
+            // CHECK TILE COLLISION
+            collisionOn = false;
+            gamePanel.collisionChecker.checkCollision(this);
+
+            // IF COLLISION IS FALSE, THEN MOVE
+            if(!collisionOn && keyIsPressed) {
+                switch (direction) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
+                }
             }
 
             spriteCounter++;
@@ -78,6 +101,7 @@ public class Player extends Entity {
                 spriteNum = (spriteNum == 1) ? 2 : 1;
             }
         }
+
     }
 
     public void draw(Graphics g2d) {
