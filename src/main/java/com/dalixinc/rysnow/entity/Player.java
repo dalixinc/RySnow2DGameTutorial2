@@ -15,6 +15,7 @@ public class Player extends Entity {
 
     public final int screenX;
     public final int screenY;
+    int hasKey = 0;
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
@@ -24,6 +25,9 @@ public class Player extends Entity {
         screenY = gamePanel.screenHeight / 2 - gamePanel.tileSize / 2;  //2nd bit?
 
         solidArea = new Rectangle(8, 16, 32, 32);
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
+
 
         setDefaultValues();
         getPlayerImage();
@@ -77,6 +81,10 @@ public class Player extends Entity {
             collisionOn = false;
             gamePanel.collisionChecker.checkCollision(this);
 
+            // CHECK OBJECT COLLISION
+            int objIndex = gamePanel.collisionChecker.checkObject(this, true);
+            pickUpObject(objIndex);
+
             // IF COLLISION IS FALSE, THEN MOVE
             if(!collisionOn && keyIsPressed) {
                 switch (direction) {
@@ -102,6 +110,35 @@ public class Player extends Entity {
             }
         }
 
+    }
+
+    public void pickUpObject (int objIndex) {
+        if (objIndex != 999) {
+            //gamePanel.superObjects[objIndex] = null;
+            String objName = gamePanel.superObjects[objIndex].name;
+
+            switch (objName) {
+                case "Key":
+                    hasKey++;
+                    gamePanel.superObjects[objIndex] = null;
+                    System.out.println("PICKED UP KEYS: " + hasKey);
+                    break;
+                case "Door":
+                    if (hasKey > 0) {
+                        hasKey--;
+                        gamePanel.superObjects[objIndex] = null;
+                        System.out.println("PICKED UP KEYS: " + hasKey);
+                    }
+                    break;
+                case "chest":
+                    if (hasKey > 555) {
+                        hasKey--;
+                        gamePanel.superObjects[objIndex] = null;
+                    }
+                    break;
+            }
+            System.out.println("PICKED UP OBJECT");
+        }
     }
 
     public void draw(Graphics g2d) {

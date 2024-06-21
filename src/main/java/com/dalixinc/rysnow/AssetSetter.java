@@ -27,7 +27,7 @@ public class AssetSetter {
         gamePanel.superObjects[2].worldY = 31 * gamePanel.tileSize;
 
         gamePanel.superObjects[3] = new OBJ_Door();
-        gamePanel.superObjects[3].worldX = 35 * gamePanel.tileSize;
+        gamePanel.superObjects[3].worldX = 37 * gamePanel.tileSize;
         gamePanel.superObjects[3].worldY = 24 * gamePanel.tileSize;
 
         gamePanel.superObjects[4] = new OBJ_Chest();
