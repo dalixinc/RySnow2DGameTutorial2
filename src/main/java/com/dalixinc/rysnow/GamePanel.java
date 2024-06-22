@@ -164,6 +164,13 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2d = (Graphics2D) g;
 
+        //DEBUG INFO
+        long drawStartTime = 0;
+        if (keyHandler.debugToggle == true) {
+            drawStartTime = System.nanoTime();
+        }
+
+
         // DRAW TILES
         tileManager.draw(g2d);
 
@@ -179,6 +186,25 @@ public class GamePanel extends JPanel implements Runnable{
 
         // DRAW UI
         ui.draw(g2d);
+
+        // DEBUG INFO
+        if (keyHandler.debugToggle == true) {
+
+            long drawEndTime = System.nanoTime();
+            long drawTime = drawEndTime - drawStartTime;
+            g2d.setColor( Color.yellow);
+            g2d.drawString( "Draw Time: " + drawTime / 1_000 + " μs", 10, 440 ); // 1 ms = 1,000 μs
+            System.out.println( "Draw Time: " + drawTime / 1_000 + " μs"); // Divide by 1_000_000  to convert to ms
+            System.out.println( "Draw Time: " + drawTime  + " ns");
+
+            g2d.setColor( Color.WHITE );
+            g2d.drawString( "Player X: " + player.worldX + " (" + (player.worldX / tileSize + 1) + ")", 10, 260 );
+            g2d.drawString( "Player Y: " + player.worldY + " (" + (player.worldY / tileSize + 1) + ")", 10, 320 );
+            //.drawString( "Player Row: " + player.worldX, 10, 340 );
+            //g2d.drawString( "Player Col: " + player.screenX, 10, 360 );
+            g2d.drawString( "Player Direction: " + player.direction, 10, 380 );
+        }
+
 
         // For Test only
         /*  g2d.setColor( Color.WHITE );
