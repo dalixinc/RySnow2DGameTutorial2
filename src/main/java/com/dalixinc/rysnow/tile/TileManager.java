@@ -1,10 +1,12 @@
 package com.dalixinc.rysnow.tile;
 
 import com.dalixinc.rysnow.GamePanel;
+import com.dalixinc.rysnow.UtilityFunctions;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -26,29 +28,26 @@ public class TileManager  {
     }
 
     public void getTileImage() {
+
+        setupBufferedImages(0, "grass", false);
+        setupBufferedImages(1, "wall", true);
+        setupBufferedImages(2, "water", true);
+        setupBufferedImages(3, "earth", false);
+        setupBufferedImages(4, "tree", true);
+        setupBufferedImages(5, "sand", false);
+
+    }
+
+    public void setupBufferedImages(int index, String imageName, boolean collision) {
+
+        UtilityFunctions utilityFunctions = new UtilityFunctions();
         try {
-            tile[0] = new Tile();
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/grass.png"));
+            tile[index] = new Tile();
+            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/" + imageName + ".png"));
+            tile[index].image = utilityFunctions.scaledImage(tile[index].image, gamePanel.tileSize, gamePanel.tileSize);
+            tile[index].collision = collision;
 
-            tile[1] = new Tile();
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/wall.png"));
-            tile[1].collision = true;
-
-            tile[2] = new Tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/water.png"));
-            tile[2].collision = true;
-
-            tile[3] = new Tile();
-            tile[3].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/earth.png"));
-
-            tile[4] = new Tile();
-            tile[4].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/tree.png"));
-            tile[4].collision = true;
-
-            tile[5] = new Tile();
-            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/sprites/tiles/sand.png"));
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -100,11 +99,12 @@ public class TileManager  {
             int screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;    ////gamePanel.screenWidth / 2 - gamePanel.tileSize / 2;
             int screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;    ////gamePanel.screenHeight / 2 - gamePanel.tileSize / 2;
 
-            if(     worldX + gamePanel.tileSize > gamePanel.player.worldX -gamePanel.player.screenX  &&
-                    worldX - gamePanel.tileSize  < gamePanel.player.worldX + gamePanel.player.screenX &&
-                    worldY + gamePanel.tileSize > gamePanel.player.worldY - gamePanel.player.screenY &&
-                    worldY - gamePanel.tileSize < gamePanel.player.worldY + gamePanel.player.screenY ) {
-                g2d.drawImage(tile[tn].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+        if(     worldX + gamePanel.tileSize > gamePanel.player.worldX -gamePanel.player.screenX  &&
+                worldX - gamePanel.tileSize  < gamePanel.player.worldX + gamePanel.player.screenX &&
+                worldY + gamePanel.tileSize > gamePanel.player.worldY - gamePanel.player.screenY &&
+                worldY - gamePanel.tileSize < gamePanel.player.worldY + gamePanel.player.screenY ) {
+                //g2d.drawImage(tile[tn].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+                g2d.drawImage(tile[tn].image, screenX, screenY, null);
             }
 
            //// - g2d.drawImage(tile[tn].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);

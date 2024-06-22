@@ -1,6 +1,7 @@
 package com.dalixinc.rysnow.object;
 
 import com.dalixinc.rysnow.GamePanel;
+import com.dalixinc.rysnow.UtilityFunctions;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,6 +14,8 @@ public class SuperObject {
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48); //   TODO 48 is the default size of the object - shouldn't be hardcoded
     public int solidAreaDefaultX = 0;
     public int solidAreaDefaultY = 0;
+    UtilityFunctions utilityFunctions = new UtilityFunctions();
+
 
     public void draw(Graphics2D g2d, GamePanel gamePanel) {
 

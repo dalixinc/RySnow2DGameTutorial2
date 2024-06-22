@@ -2,6 +2,7 @@ package com.dalixinc.rysnow.entity;
 
 import com.dalixinc.rysnow.GamePanel;
 import com.dalixinc.rysnow.KeyHandler;
+import com.dalixinc.rysnow.UtilityFunctions;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -63,19 +64,31 @@ public class Player extends Entity {
 
     public void getPlayerImage() {
         // Load player images
+
+        up1 = setupPlayerBufferedImage("boy_up_1");
+        up2 = setupPlayerBufferedImage("boy_up_2");
+        down1 = setupPlayerBufferedImage("boy_down_1");
+        down2 = setupPlayerBufferedImage("boy_down_2");
+        left1 = setupPlayerBufferedImage("boy_left_1");
+        left2 = setupPlayerBufferedImage("boy_left_2");
+        right1 = setupPlayerBufferedImage("boy_right_1");
+        right2 = setupPlayerBufferedImage("boy_right_2");
+
+    }
+
+    public BufferedImage setupPlayerBufferedImage(String imageName) {
+        UtilityFunctions utilityFunctions = new UtilityFunctions();
+        BufferedImage image   = null;
+
         try {
-            up1 = ImageIO.read( getClass().getResourceAsStream( "/sprites/player/walking/boy_up_1.png" ) );
-            up2 = ImageIO.read( getClass().getResourceAsStream( "/sprites/player/walking/boy_up_2.png") );
-            down1 = ImageIO.read( getClass().getResourceAsStream( "/sprites/player/walking/boy_down_1.png" ) );
-            down2 = ImageIO.read( getClass().getResourceAsStream( "/sprites/player/walking/boy_down_2.png" ) );
-            left1 = ImageIO.read( getClass().getResourceAsStream( "/sprites/player/walking/boy_left_1.png" ) );
-            left2 = ImageIO.read( getClass().getResourceAsStream( "/sprites/player/walking/boy_left_2.png") );
-            right1 = ImageIO.read( getClass().getResourceAsStream( "/sprites/player/walking/boy_right_1.png" ) );
-            right2 = ImageIO.read( getClass().getResourceAsStream( "/sprites/player/walking/boy_right_2.png") );
+            image = ImageIO.read( getClass().getResourceAsStream( "/sprites/player/walking/" + imageName + ".png" ) );
+            image  = utilityFunctions.scaledImage(image , gamePanel.tileSize, gamePanel.tileSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return image;
     }
+
 
     public void update() {
         if (collisionMode == 0) {
@@ -311,7 +324,9 @@ public class Player extends Entity {
                 break;
         }
 
-        g2d.drawImage(img, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+        //g2d.drawImage(img, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+        g2d.drawImage(img, screenX, screenY, null);
+
         if (showCollisionRect) {
             g2d.setColor(Color.RED);
             g2d.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
