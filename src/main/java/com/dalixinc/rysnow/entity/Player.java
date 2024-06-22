@@ -16,6 +16,17 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
     public int hasKey = 0;
+    int standCounter = 0;
+
+    // For Tile-Based Collision
+    boolean moving = false;
+    int pixelCounter = 0;
+
+    // DEBUG OPTIONS
+    private boolean showCollisionRect = true;
+
+    // COLLISION MODES
+    int collisionMode = 0;  //0 = Standard collision mode, 1 = Tile-Based
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
@@ -24,11 +35,21 @@ public class Player extends Entity {
         screenX = gamePanel.screenWidth / 2 - gamePanel.tileSize / 2;
         screenY = gamePanel.screenHeight / 2 - gamePanel.tileSize / 2;  //2nd bit?
 
+        // Mode 0: Standard Collision Mode (Default
         solidArea = new Rectangle(8, 16, 32, 32);
+
+        // Mode 1: Tile-Based Collision Mode
+        if (collisionMode == 1) {
+            solidArea.x = 1;
+            solidArea.y = 1;
+            solidArea.width = gamePanel.tileSize - 2;
+            solidArea.height = gamePanel.tileSize - 2;
+        }
+
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
-
+        // SETUP methods
         setDefaultValues();
         getPlayerImage();
     }
@@ -57,9 +78,17 @@ public class Player extends Entity {
     }
 
     public void update() {
+        if (collisionMode == 0) {
+            updateMode0();
+        } else if (collisionMode == 1) {
+            updateMode1();
+        }
+    }
 
+    private void updateMode0() {
+        // Mode 0: Standard Collision Mode
         boolean animateWhenStill = true;
-        // animateWhenStill= keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
+        animateWhenStill= keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
         if (animateWhenStill) {
 
             boolean keyIsPressed = keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
@@ -104,13 +133,105 @@ public class Player extends Entity {
             }
 
             spriteCounter++;
-            if (spriteCounter > 10) {
+            if (spriteCounter > 12) {
                 spriteCounter = 0;
                 spriteNum = (spriteNum == 1) ? 2 : 1;
             }
+        }  else {
+            standCounter++;
+            //Snaps back to Sprite 1
+            if (standCounter == gamePanel.FPS / 3) {
+                spriteNum = 1;
+                standCounter = 0;
+            }
         }
-
     }
+
+
+    // This method is supposed to ensure that each move completes to a new tile - but I can't get it to work
+    private void updateMode1() {
+        boolean animateWhenStill = true;
+        animateWhenStill= keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
+
+
+        if (animateWhenStill) {
+
+
+            if (!moving) {
+
+                if (keyHandler.upPressed) {
+                    direction = "up";
+                }
+                if (keyHandler.downPressed) {
+                    direction = "down";
+                }
+                if (keyHandler.leftPressed) {
+                    direction = "left";
+                }
+                if (keyHandler.rightPressed) {
+                    direction = "right";
+                }
+
+                System.out.println("Setting moving true!!");
+                moving = true;
+
+                // CHECK TILE COLLISION
+                collisionOn = false;
+                gamePanel.collisionChecker.checkCollision(this);
+
+                // CHECK OBJECT COLLISION
+                int objIndex = gamePanel.collisionChecker.checkObject(this, true);
+                pickUpObject(objIndex);
+            }
+
+            if (moving) {
+
+               //boolean keyIsPressed = keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
+
+                // IF COLLISION IS FALSE, THEN MOVE
+                if(!collisionOn) {
+                    System.out.println("MOVING!!  " + pixelCounter  + " direction: " + direction + " worldX: " + worldX + " worldY: " + worldY) ;
+                    switch (direction) {
+                        case "up":
+                            worldY -= speed;
+                            break;
+                        case "down":
+                            worldY += speed;
+                            break;
+                        case "left":
+                            worldX -= speed;
+                            break;
+                        case "right":
+                            worldX += speed;
+                            break;
+                    }
+                }
+
+                spriteCounter++;
+                if (spriteCounter > 12) {
+                    spriteCounter = 0;
+                    spriteNum = (spriteNum == 1) ? 2 : 1;
+                }
+
+                pixelCounter += speed;
+                if (pixelCounter >= gamePanel.tileSize) {
+                    moving = false;
+                    pixelCounter = 0;
+                } else {
+                    System.out.println("Pixel Counter: " + pixelCounter);
+                }
+           }
+        } else {
+            standCounter++;
+            //Snaps back to Sprite 1
+            if (standCounter == gamePanel.FPS / 3) {
+                spriteNum = 1;
+                standCounter = 0;
+            }
+        }
+    }
+
+
 
     public void pickUpObject (int objIndex) {
         if (objIndex != 999) {
@@ -191,5 +312,9 @@ public class Player extends Entity {
         }
 
         g2d.drawImage(img, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+        if (showCollisionRect) {
+            g2d.setColor(Color.RED);
+            g2d.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+        }
     }
 }
