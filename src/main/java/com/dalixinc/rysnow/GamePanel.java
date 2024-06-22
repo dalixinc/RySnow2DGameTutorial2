@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable{
-    private static final int FPS = 60;  // Frames per second
+    public static final int FPS = 60;  // Frames per second
 
     // SCREEN SETTINGS
     final int originalTileSize = 16;   // 16 x 16 tiles
@@ -33,6 +33,7 @@ public class GamePanel extends JPanel implements Runnable{
     TileManager tileManager = new TileManager(this);
     public CollisionChecker collisionChecker = new CollisionChecker(this);
     public AssetSetter assetSetter = new AssetSetter(this);
+    public UI ui = new UI(this);
     Thread gameThread;
 
     // ENTITY AND OBJECT
@@ -175,6 +176,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // DRAW PLAYER
         player.draw(g2d);
+
+        // DRAW UI
+        ui.draw(g2d);
 
         // For Test only
         /*  g2d.setColor( Color.WHITE );
