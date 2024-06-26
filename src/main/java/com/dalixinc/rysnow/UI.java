@@ -9,8 +9,9 @@ import java.text.DecimalFormat;
 public class UI {
 
     GamePanel gamePanel;
+    Graphics2D g2d;  //TODO: Not certain this is required
     Font arial_40, ariel_80B;
-    BufferedImage keyImage;
+    BufferedImage keyImage; //TODO: Remove this
     public boolean messageOn = false;
     public String message = "";
     int messageCounter = 0;
@@ -22,8 +23,8 @@ public class UI {
         this.gamePanel = gamePanel;
         arial_40 = new Font("Arial", Font.PLAIN, 40);
         ariel_80B = new Font("Arial", Font.BOLD, 80);
-        OBJ_Key key = new OBJ_Key(gamePanel);
-        keyImage = key.image;
+        OBJ_Key key = new OBJ_Key(gamePanel); //TODO: Remove this
+        keyImage = key.image; //TODO: Remove this
     }
 
     public void showMessage(String message) {
@@ -32,11 +33,23 @@ public class UI {
     }
     public void draw(Graphics2D graphics2d) {
 
+        this.g2d = graphics2d;  //TODO: Not certain this is required
+
+        //DEFAULT FONT AND COLOUR
+        graphics2d.setFont(arial_40);
+        graphics2d.setColor(Color.WHITE);
+
+        if (gamePanel.gameState == gamePanel.PLAY_STATE) {
+            drawPlayScreen(graphics2d);
+        }
+        if (gamePanel.gameState == gamePanel.PAUSE_STATE) {
+            drawPauseScreen(graphics2d);
+        }
+
+    }
+
+    private void drawPlayScreen(Graphics2D graphics2d) {
         if (gameOver) {
-
-            graphics2d.setFont(arial_40);
-            graphics2d.setColor(Color.WHITE);
-
             String text = "GAME OVER";
             int textLength = (int) graphics2d.getFontMetrics().getStringBounds(text, graphics2d).getWidth();
             int x = gamePanel.screenWidth / 2 - textLength / 2;
@@ -84,6 +97,19 @@ public class UI {
                 }
             }
         }
+    }
 
+    private void drawPauseScreen(Graphics2D graphics2d) {
+        graphics2d.setColor(Color.WHITE);
+        graphics2d.setFont(ariel_80B);
+        String text = "PAUSED";
+        int x = getXforCenteredText(text, graphics2d);
+        int y = gamePanel.screenHeight / 2;
+        graphics2d.drawString(text, x, y);
+    }
+
+    private int getXforCenteredText(String text, Graphics2D graphics2d) {
+        int textLength = (int) graphics2d.getFontMetrics().getStringBounds(text, graphics2d).getWidth();
+        return gamePanel.screenWidth / 2 - textLength / 2;
     }
 }

@@ -36,7 +36,7 @@ public class Player extends Entity {
         screenX = gamePanel.screenWidth / 2 - gamePanel.tileSize / 2;
         screenY = gamePanel.screenHeight / 2 - gamePanel.tileSize / 2;  //2nd bit?
 
-        // Mode 0: Standard Collision Mode (Default
+        // Mode 0: Standard Collision Mode (Default)
         solidArea = new Rectangle(8, 16, 32, 32);
 
         // Mode 1: Tile-Based Collision Mode

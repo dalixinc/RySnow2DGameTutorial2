@@ -4,11 +4,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
+    GamePanel gamePanel;
 
     public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, escapePressed;
-
     //DEBUG
+
     boolean debugToggle = false;
+
+    public KeyHandler(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+    }
 
    @Override
     public void keyPressed(KeyEvent e) {
@@ -40,7 +45,16 @@ public class KeyHandler implements KeyListener {
                 escapePressed = true;
                 System.out.println("Escape key pressed");
                 break;
-
+            case KeyEvent.VK_0:
+                if (gamePanel.gameState == gamePanel.PLAY_STATE) {
+                    gamePanel.gameState = gamePanel.PAUSE_STATE;
+                    gamePanel.stopMusic();
+                } else if (gamePanel.gameState == gamePanel.PAUSE_STATE) {
+                    gamePanel.gameState = gamePanel.PLAY_STATE;
+                    gamePanel.playMusic(0);
+                }
+                System.out.println("0 key pressed");
+                break;
                 // DEBUG TOGGLE
             case KeyEvent.VK_P:
                 System.out.println("P key pressed - DEBUG Toggled");

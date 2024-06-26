@@ -27,7 +27,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int worldHeight = tileSize * maxWorldRow;
 
     // GAME SETTINGS
-    KeyHandler keyHandler = new KeyHandler();
+    KeyHandler keyHandler = new KeyHandler(this);
     Sound music = new Sound();
     Sound sfx = new Sound();
     TileManager tileManager = new TileManager(this);
@@ -39,6 +39,11 @@ public class GamePanel extends JPanel implements Runnable{
     // ENTITY AND OBJECT
     public Player player = new Player(this, keyHandler);
     public SuperObject[] superObjects = new SuperObject[10];
+
+    // GAME STATE
+    public int gameState;
+    public static final int PLAY_STATE   = 0;
+    public static final int PAUSE_STATE = 1;
 
 
     public GamePanel() {
@@ -54,6 +59,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         assetSetter.setObjects();
         playMusic(0);
+        gameState = PLAY_STATE;
     }
 
     public void startGameThread() {
@@ -110,7 +116,7 @@ public class GamePanel extends JPanel implements Runnable{
         long currentTime;
 
         // "Proof" Vars
-        //// long count = 0;
+        ////long count = 0;
         long timer = 0;
         int drawCount = 0;
 
@@ -121,13 +127,14 @@ public class GamePanel extends JPanel implements Runnable{
             timer += (currentTime - lastTime);
             lastTime = currentTime;
 
-            //// System.out.println( "Count: " + count++ + "  Delta: " + delta);
+            ////System.out.println( "Count: " + count++ + "  Delta: " + delta);
 
             if ( delta >= 1 ) {
                 update();
                 repaint();
                 delta--;
                 drawCount++;
+                ////count = 0;
                 //// System.out.println( "Delta Final: " + delta);
                 //// System.exit(0);
             }
@@ -145,7 +152,12 @@ public class GamePanel extends JPanel implements Runnable{
     public void update() {
         // Update game state
 
-        player.update();
+        if (gameState == PLAY_STATE) {
+            player.update();
+        }
+        if (gameState == PAUSE_STATE) {
+            // Do nothing
+        }
 
 
         // For Test Alone
@@ -198,8 +210,8 @@ public class GamePanel extends JPanel implements Runnable{
             System.out.println( "Draw Time: " + drawTime  + " ns");
 
             g2d.setColor( Color.WHITE );
-            g2d.drawString( "Player X: " + player.worldX + " (" + (player.worldX / tileSize + 1) + ")", 10, 260 );
-            g2d.drawString( "Player Y: " + player.worldY + " (" + (player.worldY / tileSize + 1) + ")", 10, 320 );
+            g2d.drawString( "Player X (Col) : " + player.worldX + " (" + (player.worldX / tileSize + 1) + ")", 10, 260 );
+            g2d.drawString( "Player Y (Row) : " + player.worldY + " (" + (player.worldY / tileSize + 1) + ")", 10, 320 );
             //.drawString( "Player Row: " + player.worldX, 10, 340 );
             //g2d.drawString( "Player Col: " + player.screenX, 10, 360 );
             g2d.drawString( "Player Direction: " + player.direction, 10, 380 );
