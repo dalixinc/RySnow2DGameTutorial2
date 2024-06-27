@@ -16,14 +16,14 @@ public class SuperObject {
 
     public void draw(Graphics2D g2d, GamePanel gamePanel) {
 
-        int screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;
-        int screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;
+        double screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;
+        double screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;
 
         if(     worldX + gamePanel.tileSize > gamePanel.player.worldX -gamePanel.player.screenX  &&
                 worldX - gamePanel.tileSize  < gamePanel.player.worldX + gamePanel.player.screenX &&
                 worldY + gamePanel.tileSize > gamePanel.player.worldY - gamePanel.player.screenY &&
                 worldY - gamePanel.tileSize < gamePanel.player.worldY + gamePanel.player.screenY ) {
-            g2d.drawImage(image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+            g2d.drawImage(image, (int)screenX, (int)screenY, gamePanel.tileSize, gamePanel.tileSize, null);
         }
     }
 

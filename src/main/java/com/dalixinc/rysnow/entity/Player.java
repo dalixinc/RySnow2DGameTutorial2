@@ -13,6 +13,9 @@ public class Player extends Entity {
     GamePanel gamePanel;
     KeyHandler keyHandler;
 
+    public final int DEFAULT_WORLD_X = 28;
+    public final int DEFAULT_WORLD_Y = 27;
+
     public final int screenX;
     public final int screenY;
     public int hasKey = 0;
@@ -55,8 +58,8 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        worldX = gamePanel.tileSize * 28;//25;
-        worldY = gamePanel.tileSize * 27;//22;
+        worldX = gamePanel.tileSize * DEFAULT_WORLD_X;//25;
+        worldY = gamePanel.tileSize * DEFAULT_WORLD_Y;//22;
         speed = 6;
         direction = "down";
     }

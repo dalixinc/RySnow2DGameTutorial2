@@ -11,12 +11,16 @@ public class GamePanel extends JPanel implements Runnable{
     public static final int FPS = 60;  // Frames per second
 
     // SCREEN SETTINGS
+    public static final int MAX_SCREEN_COLUMN = 16;
+    public static final int MAX_SCREEN_ROW = 12;
     final int originalTileSize = 16;   // 16 x 16 tiles
     final int  scale = 3;               // 3x scale
 
-    public final int tileSize = originalTileSize * scale;  // 48 x 48 pixels
-    final int maxScreenCol = 16;                    // 16 columns
-    final int maxScreenRow = 12;                    // 12 rows
+    public  int tileSize = originalTileSize * scale;  // 48 x 48 pixels
+
+    private final int DEFAULT_TILE_SIZE = tileSize;
+    int maxScreenCol = 16;                    // 16 columns
+    int maxScreenRow = 12;                    // 12 rows
     public final int screenWidth = tileSize * maxScreenCol; // 768 pixels
     public final int screenHeight = tileSize * maxScreenRow; // 576 pixels
 
@@ -27,7 +31,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int worldHeight = tileSize * maxWorldRow;
 
     // GAME SETTINGS
-    KeyHandler keyHandler = new KeyHandler();
+    KeyHandler keyHandler = new KeyHandler(this);
     Sound music = new Sound();
     Sound sfx = new Sound();
     TileManager tileManager = new TileManager(this);
@@ -54,6 +58,30 @@ public class GamePanel extends JPanel implements Runnable{
 
         assetSetter.setObjects();
         playMusic(0);
+    }
+
+    public void zoomInOut(int i) {
+        if(i == 0) {
+            tileSize = DEFAULT_TILE_SIZE;
+            player.worldX = tileSize * player.DEFAULT_WORLD_X;
+            player.worldY = tileSize * player.DEFAULT_WORLD_Y;
+        }
+
+        int oldWorldWidth = tileSize * maxWorldCol;
+        tileSize += i;
+        int newWorldWidth = tileSize * maxWorldCol;
+
+        double multiplier = (double) newWorldWidth / oldWorldWidth;
+
+        System.out.println("New World Width: " + newWorldWidth);
+        System.out.println("New Tile Size: " + tileSize);
+        System.out.println("Player  worldX:" + player.worldX);
+
+        double newPlayerWorldX = player.worldX * multiplier;
+        double newPlayerWorldY = player.worldY * multiplier;
+        player.worldX = newPlayerWorldX;
+        player.worldY = newPlayerWorldY;
+
     }
 
     public void startGameThread() {
@@ -198,6 +226,10 @@ public class GamePanel extends JPanel implements Runnable{
             System.out.println( "Draw Time: " + drawTime  + " ns");
 
             g2d.setColor( Color.WHITE );
+
+
+
+
             g2d.drawString( "Player X: " + player.worldX + " (" + (player.worldX / tileSize + 1) + ")", 10, 260 );
             g2d.drawString( "Player Y: " + player.worldY + " (" + (player.worldY / tileSize + 1) + ")", 10, 320 );
             //.drawString( "Player Row: " + player.worldX, 10, 340 );

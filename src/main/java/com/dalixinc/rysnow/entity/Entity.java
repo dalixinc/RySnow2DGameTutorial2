@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 public class Entity {
 
     // POSITION
-    public int worldX, worldY;
+    public double worldX, worldY;
     public int speed;
 
     // SPRITE INFO
@@ -17,6 +17,6 @@ public class Entity {
 
     // COLLISION INFO
     public Rectangle solidArea;
-    public int solidAreaDefaultX, solidAreaDefaultY;
+    public double solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
 }
