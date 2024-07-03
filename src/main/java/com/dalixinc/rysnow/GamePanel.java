@@ -1,5 +1,6 @@
 package com.dalixinc.rysnow;
 
+import com.dalixinc.rysnow.entity.Entity;
 import com.dalixinc.rysnow.entity.Player;
 import com.dalixinc.rysnow.object.SuperObject;
 import com.dalixinc.rysnow.tile.TileManager;
@@ -39,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable{
     // ENTITY AND OBJECT
     public Player player = new Player(this, keyHandler);
     public SuperObject[] superObjects = new SuperObject[10];
+    public Entity[] npc = new Entity[10];
 
     // GAME STATE
     public int gameState;
@@ -58,6 +60,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void setUpGame() {
 
         assetSetter.setObjects();
+        assetSetter.setNPC();
         playMusic(0);
         gameState = PLAY_STATE;
     }
@@ -153,7 +156,14 @@ public class GamePanel extends JPanel implements Runnable{
         // Update game state
 
         if (gameState == PLAY_STATE) {
+            // PLAYER
             player.update();
+            // NPC
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[i] != null) {
+                    npc[i].update();
+                }
+            }
         }
         if (gameState == PAUSE_STATE) {
             // Do nothing
@@ -190,6 +200,13 @@ public class GamePanel extends JPanel implements Runnable{
         for (int i = 0; i < superObjects.length; i++) {
             if (superObjects[i] != null) {
                 superObjects[i].draw(g2d, this);
+            }
+        }
+
+        // DRAW NPC
+        for (int i = 0; i < npc.length; i++) {
+            if (npc[i] != null) {
+                npc[i].draw(g2d);
             }
         }
 

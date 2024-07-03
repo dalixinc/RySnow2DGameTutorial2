@@ -1,5 +1,6 @@
 package com.dalixinc.rysnow;
 
+import com.dalixinc.rysnow.entity.NPC_Wizard;
 import com.dalixinc.rysnow.object.OBJ_Boots;
 import com.dalixinc.rysnow.object.OBJ_Chest;
 import com.dalixinc.rysnow.object.OBJ_Door;
@@ -47,5 +48,12 @@ public class AssetSetter {
         gamePanel.superObjects[7].worldX = 45 * gamePanel.tileSize;
         gamePanel.superObjects[7].worldY = 27 * gamePanel.tileSize;
 
+    }
+
+    public void setNPC()  {
+
+        gamePanel.npc[0] = new NPC_Wizard(gamePanel);
+        gamePanel.npc[0].worldX = 25 * gamePanel.tileSize;
+        gamePanel.npc[0].worldY = 22 * gamePanel.tileSize;
     }
 }
