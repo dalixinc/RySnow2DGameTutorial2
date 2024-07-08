@@ -28,6 +28,7 @@ public class Player extends Entity {
 
     // COLLISION MODES
     int collisionMode = 0;  //0 = Standard collision mode, 1 = Tile-Based
+    private boolean autoInterract = true; // Whether the player can auto-interract with NPCs or must press enter
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
 
@@ -298,6 +299,11 @@ public class Player extends Entity {
         if (npcIndex != 999) {
             System.out.println("Bump into NPC!");
             ///gamePanel.npc[npcIndex].interact();
+
+            if (gamePanel.keyHandler.enterPressed || gamePanel.keyHandler.spacePressed || autoInterract) {
+                gamePanel.gameState = gamePanel.DIALOGUE_STATE;
+                gamePanel.npc[npcIndex].speak();
+            }
         }
     }
 

@@ -28,7 +28,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int worldHeight = tileSize * maxWorldRow;
 
     // GAME SETTINGS
-    KeyHandler keyHandler = new KeyHandler(this);
+    public KeyHandler keyHandler = new KeyHandler(this);
     Sound music = new Sound();
     Sound sfx = new Sound();
     TileManager tileManager = new TileManager(this);
@@ -46,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable{
     public int gameState;
     public static final int PLAY_STATE   = 0;
     public static final int PAUSE_STATE = 1;
+    public static final int DIALOGUE_STATE  = 2;
 
 
     public GamePanel() {

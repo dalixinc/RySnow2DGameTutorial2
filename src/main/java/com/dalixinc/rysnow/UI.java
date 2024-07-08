@@ -17,6 +17,7 @@ public class UI {
     int messageCounter = 0;
     public boolean gameOver = false;
     double playTime = 0;
+    public String currentDialogue = "";
     DecimalFormat df = new DecimalFormat("#.##");  // 2 decimal places ("#0.00")
 
     public UI(GamePanel gamePanel) {
@@ -33,17 +34,23 @@ public class UI {
     }
     public void draw(Graphics2D graphics2d) {
 
-        this.g2d = graphics2d;  //TODO: Not certain this is required
+        this.g2d = graphics2d;  //TODO: Not certain this is required - either this or we pass around as a method parameter.
 
         //DEFAULT FONT AND COLOUR
         graphics2d.setFont(arial_40);
         graphics2d.setColor(Color.WHITE);
 
+        // PLAY STATE
         if (gamePanel.gameState == gamePanel.PLAY_STATE) {
             drawPlayScreen(graphics2d);
         }
-        if (gamePanel.gameState == gamePanel.PAUSE_STATE) {
+        // PAUSE STATE
+        else if (gamePanel.gameState == gamePanel.PAUSE_STATE) {
             drawPauseScreen(graphics2d);
+        }
+        // DIALOGUE STATE
+        else if (gamePanel.gameState == gamePanel.DIALOGUE_STATE) {
+            drawDialogueScreen(graphics2d);
         }
 
     }
@@ -106,6 +113,50 @@ public class UI {
         int x = getXforCenteredText(text, graphics2d);
         int y = gamePanel.screenHeight / 2;
         graphics2d.drawString(text, x, y);
+    }
+
+    private void drawDialogueScreen(Graphics2D g2d) {
+
+        // WINDOW
+        int x = gamePanel.tileSize * 2;
+        int y = gamePanel.tileSize / 2;
+        int width = gamePanel.screenWidth - gamePanel.tileSize * 4;
+        int height = gamePanel.tileSize * 4;
+        drawSubWindow(g2d, x, y, width, height);
+
+        // DIALOGUE
+        g2d.setFont(g2d.getFont().deriveFont(Font.PLAIN, 28F));
+        x += gamePanel.tileSize; // /2;
+        y += gamePanel.tileSize; // /2;
+
+        for (String line : currentDialogue.split("\n")) {
+            g2d.drawString(line, x, y);
+            y += g2d.getFontMetrics().getHeight();
+        }
+
+/*        graphics2d.setColor(Color.WHITE);
+        graphics2d.setFont(ariel_80B);
+        String text = "DIALOGUE";
+        int x = getXforCenteredText(text, graphics2d);
+        int y = gamePanel.screenHeight / 2;
+        graphics2d.drawString(text, x, y);*/
+    }
+
+    public void drawSubWindow(Graphics2D graphics2d, int x, int y, int width, int height) {
+
+        Color windowBG = new Color(0, 0, 0, 220);
+        graphics2d.setColor(windowBG);
+        graphics2d.fillRoundRect(x, y, width, height, 35, 35);
+        System.out.println("Drawing SubWindow: Color is: " + windowBG.toString());
+
+        Color windowBorder = new Color(255, 255, 255, 255);
+        graphics2d.setColor(windowBorder);
+        graphics2d.setStroke(new BasicStroke(5));
+        graphics2d.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
+        /*graphics2d.setColor(Color.BLACK);
+        graphics2d.fillRect(x, y, width, height);
+        graphics2d.setColor(Color.WHITE);
+        graphics2d.drawRect(x, y, width, height);*/
     }
 
     private int getXforCenteredText(String text, Graphics2D graphics2d) {

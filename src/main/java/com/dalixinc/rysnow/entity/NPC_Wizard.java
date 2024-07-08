@@ -16,6 +16,7 @@ public class NPC_Wizard extends Entity{
         this.direction = "down";
 
         getWizardImage();
+        setDialogue();
 
         solidArea = new Rectangle(8, 8, 32, 32);
 
@@ -38,6 +39,20 @@ public class NPC_Wizard extends Entity{
         right1 = setupEntityBufferedImage(path + "oldman_right_1");
         right2 = setupEntityBufferedImage(path + "oldman_right_2");
 
+    }
+
+    public void setDialogue() {
+        // Set dialogue
+        dialogueList[0] = "Hello there, doofus!!";
+        dialogueList[1] = "I am the incredible wizard,\nHomunculus!";
+        dialogueList[2] = "I could turn you into a newt!!!";
+        dialogueList[3] = "But I won't, because I'm a \nfantastic wizard.";
+        dialogueList[4] = "Good luck finding the treasure,\nnitwit, you will need it!";
+    }
+
+    @Override
+    public void speak() {
+        super.speak();
     }
 
     // The Basic Wizard AI

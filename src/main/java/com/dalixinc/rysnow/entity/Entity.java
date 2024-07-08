@@ -31,13 +31,40 @@ public class Entity {
     // ENTITY ANIMATION
     public int actionLockCounter = 0;
 
+    // REVEAL COLLISION RECTANGLE
     private boolean showCollisionRect = true;
+
+    // DIALOGUE
+    public String[] dialogueList = new String[20];
+    public int dialogueIndex = 0;
 
     public Entity(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
 
     public void setAction() {}
+
+    public void speak() {
+        if (dialogueList[dialogueIndex] == null) {
+            dialogueIndex = 0;  //dialogueList.length - 1;
+        }
+        gamePanel.ui.currentDialogue = dialogueList[dialogueIndex++];
+
+        switch(gamePanel.player.direction) {
+            case "up":
+                this.direction = "down";
+                break;
+            case "down":
+                this.direction = "up";
+                break;
+            case "left":
+                this.direction = "right";
+                break;
+            case "right":
+                this.direction = "left";
+                break;
+        }
+    }
 
     public void update(){
         setAction();
