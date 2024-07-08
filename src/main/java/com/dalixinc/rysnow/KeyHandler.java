@@ -21,37 +21,83 @@ public class KeyHandler implements KeyListener {
 
         // TITLE STATE
        if (gamePanel.gameState == gamePanel.TITLE_STATE) {
-           switch (keyCode) {
-               case KeyEvent.VK_UP:
-                   gamePanel.ui.inputNum--;
-                   if (gamePanel.ui.inputNum < 0) gamePanel.ui.inputNum = 2;
-                   System.out.println("UP key pressed");
-                   break;
-               case KeyEvent.VK_DOWN:
-                   gamePanel.ui.inputNum++;
-                   System.out.println("DOWN key pressed");
-                   if (gamePanel.ui.inputNum > 2) gamePanel.ui.inputNum = 0;
-                   break;
-                case KeyEvent.VK_ENTER:
-                    switch (gamePanel.ui.inputNum) {
-                        case 0:
-                            gamePanel.gameState = gamePanel.PLAY_STATE;
-                            gamePanel.playMusic(0);
-                            break;
-                        case 1:
-                            // Add Later
+
+           if (gamePanel.ui.titleScreenState==0) {
+
+               switch (keyCode) {
+                   case KeyEvent.VK_UP:
+                       gamePanel.ui.inputNum--;
+                       if (gamePanel.ui.inputNum < 0) gamePanel.ui.inputNum = 2;
+                       System.out.println("UP key pressed");
+                       break;
+                   case KeyEvent.VK_DOWN:
+                       gamePanel.ui.inputNum++;
+                       System.out.println("DOWN key pressed");
+                       if (gamePanel.ui.inputNum > 2) gamePanel.ui.inputNum = 0;
+                       break;
+                   case KeyEvent.VK_ENTER:
+                       switch (gamePanel.ui.inputNum) {
+                           case 0:
+                               gamePanel.gameState = gamePanel.PLAY_STATE;
+                               ///gamePanel.ui.titleScreenState = 1;
+                               gamePanel.playMusic(0); // TODo: Not here probably
+                               break;
+                           case 1:
+                               // Add Later (Load Game)
                             /*gamePanel.gameState = gamePanel.PLAY_STATE;
                             gamePanel.playMusic(1);
                             break;*/
-                        case 2:
-                            System.exit(0);
-                            break;
-                    }
-                    System.out.println("Enter key pressed");
-                    break;
-               default:
-                   System.out.println("Unregistered Key pressed");
+                           case 2:
+                               System.exit(0);
+                               break;
+                       }
+                       System.out.println("Enter key pressed");
+                       break;
+                   default:
+                       System.out.println("Unregistered Key pressed");
+               }
+           } else if (gamePanel.ui.titleScreenState==1) {
+
+               switch (keyCode) {
+                   case KeyEvent.VK_UP:
+                       gamePanel.ui.inputNum--;
+                       if (gamePanel.ui.inputNum < 0) gamePanel.ui.inputNum = 3;
+                       System.out.println("UP key pressed");
+                       break;
+                   case KeyEvent.VK_DOWN:
+                       gamePanel.ui.inputNum++;
+                       System.out.println("DOWN key pressed");
+                       if (gamePanel.ui.inputNum > 3) gamePanel.ui.inputNum = 0;
+                       break;
+                   case KeyEvent.VK_ENTER:
+                       switch (gamePanel.ui.inputNum) {
+                           case 0:
+                               System.out.println("You are a mighty Warrior!");
+                               gamePanel.gameState = gamePanel.PLAY_STATE;
+                               ///gamePanel.playMusic(0);
+                               break;
+                           case 1:
+                               System.out.println("You are a powerful Wizard!");
+                               gamePanel.gameState = gamePanel.PLAY_STATE;
+                               ///gamePanel.playMusic(0);
+                               break;
+                           case 2:
+                               System.out.println("You are a wily Burglar!");
+                               gamePanel.gameState = gamePanel.PLAY_STATE;
+                               ///gamePanel.playMusic(0);
+                               break;
+                           case 3:
+                                gamePanel.ui.titleScreenState = 0;
+                               break;
+                       }
+                       System.out.println("Enter key pressed");
+                       break;
+                   default:
+                       System.out.println("Unregistered Key pressed");
+               }
            }
+
+
        }
         // PLAY STATE
        if (gamePanel.gameState == gamePanel.PLAY_STATE) {
