@@ -4,13 +4,15 @@ import com.dalixinc.rysnow.object.OBJ_Key;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 
 public class UI {
 
     GamePanel gamePanel;
     Graphics2D g2d;  //TODO: Not certain this is required
-    Font arial_40, ariel_80B;
+    Font arial_40, ariel_80B, maruMonica, purisaBold, bauhaus, blackadder ;
     BufferedImage keyImage; //TODO: Remove this
     public boolean messageOn = false;
     public String message = "";
@@ -24,6 +26,23 @@ public class UI {
         this.gamePanel = gamePanel;
         arial_40 = new Font("Arial", Font.PLAIN, 40);
         ariel_80B = new Font("Arial", Font.BOLD, 80);
+
+        // IMPORT FONTS
+        InputStream is = getClass().getResourceAsStream("/fonts/x12y16pxMaruMonica.ttf");
+        try {
+            maruMonica =  Font.createFont(Font.TRUETYPE_FONT, is);
+            is = getClass().getResourceAsStream("/fonts/Purisa Bold.ttf");
+            purisaBold = Font.createFont(Font.TRUETYPE_FONT, is);
+            is = getClass().getResourceAsStream("/fonts/BAUHS93.ttf");
+            bauhaus = Font.createFont(Font.TRUETYPE_FONT, is);
+            is = getClass().getResourceAsStream("/fonts/ITCBLKAD.ttf");
+            blackadder = Font.createFont(Font.TRUETYPE_FONT, is);
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         OBJ_Key key = new OBJ_Key(gamePanel); //TODO: Remove this
         keyImage = key.image; //TODO: Remove this
     }
@@ -37,7 +56,9 @@ public class UI {
         this.g2d = graphics2d;  //TODO: Not certain this is required - either this or we pass around as a method parameter.
 
         //DEFAULT FONT AND COLOUR
-        graphics2d.setFont(arial_40);
+        //graphics2d.setFont(maruMonica);  // previously ariel_40
+        graphics2d.setFont(purisaBold);  // previously ariel_40
+        graphics2d.setRenderingHint((RenderingHints.KEY_ANTIALIASING), RenderingHints.VALUE_ANTIALIAS_ON);
         graphics2d.setColor(Color.WHITE);
 
         // PLAY STATE
@@ -129,11 +150,16 @@ public class UI {
         x += gamePanel.tileSize; // /2;
         y += gamePanel.tileSize; // /2;
 
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 24F));
+
         for (String line : currentDialogue.split("\n")) {
             g2d.drawString(line, x, y);
             y += g2d.getFontMetrics().getHeight();
         }
-
+        int size = g2d.getFont().getSize();
+        String name = g2d.getFont().getFontName() + " : " + size;
+        g2d.drawString(name, x, y);
+        //g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 28F));
 /*        graphics2d.setColor(Color.WHITE);
         graphics2d.setFont(ariel_80B);
         String text = "DIALOGUE";
