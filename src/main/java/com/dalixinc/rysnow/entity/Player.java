@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class Player extends Entity {
 
-    GamePanel gamePanel;
+
     KeyHandler keyHandler;
 
     public final int screenX;
@@ -28,9 +28,12 @@ public class Player extends Entity {
 
     // COLLISION MODES
     int collisionMode = 0;  //0 = Standard collision mode, 1 = Tile-Based
+    private boolean autoInterract = true; // Whether the player can auto-interract with NPCs or must press enter
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
-        this.gamePanel = gamePanel;
+
+        super(gamePanel);
+
         this.keyHandler = keyHandler;
 
         screenX = gamePanel.screenWidth / 2 - gamePanel.tileSize / 2;
@@ -65,14 +68,16 @@ public class Player extends Entity {
     public void getPlayerImage() {
         // Load player images
 
-        up1 = setupPlayerBufferedImage("boy_up_1");
-        up2 = setupPlayerBufferedImage("boy_up_2");
-        down1 = setupPlayerBufferedImage("boy_down_1");
-        down2 = setupPlayerBufferedImage("boy_down_2");
-        left1 = setupPlayerBufferedImage("boy_left_1");
-        left2 = setupPlayerBufferedImage("boy_left_2");
-        right1 = setupPlayerBufferedImage("boy_right_1");
-        right2 = setupPlayerBufferedImage("boy_right_2");
+        String path = "/sprites/player/walking/";
+
+        up1 = setupEntityBufferedImage(path + "boy_up_1");
+        up2 = setupEntityBufferedImage(path + "boy_up_2");
+        down1 = setupEntityBufferedImage(path + "boy_down_1");
+        down2 = setupEntityBufferedImage(path + "boy_down_2");
+        left1 = setupEntityBufferedImage(path + "boy_left_1");
+        left2 = setupEntityBufferedImage(path + "boy_left_2");
+        right1 = setupEntityBufferedImage(path + "boy_right_1");
+        right2 = setupEntityBufferedImage(path + "boy_right_2");
 
     }
 
@@ -126,6 +131,10 @@ public class Player extends Entity {
             // CHECK OBJECT COLLISION
             int objIndex = gamePanel.collisionChecker.checkObject(this, true);
             pickUpObject(objIndex);
+
+            // CHECK NPC COLLISION
+            int npcIndex = gamePanel.collisionChecker.checkEntityCollision(this, gamePanel.npc);
+            interractionWithNPC(npcIndex);
 
             // IF COLLISION IS FALSE, THEN MOVE
             if(!collisionOn && keyIsPressed) {
@@ -283,6 +292,18 @@ public class Player extends Entity {
                     break;
             }
             System.out.println("PICKED UP OBJECT");
+        }
+    }
+
+    public void interractionWithNPC(int npcIndex) {
+        if (npcIndex != 999) {
+            System.out.println("Bump into NPC!");
+            ///gamePanel.npc[npcIndex].interact();
+
+            if (gamePanel.keyHandler.enterPressed || gamePanel.keyHandler.spacePressed || autoInterract) {
+                gamePanel.gameState = gamePanel.DIALOGUE_STATE;
+                gamePanel.npc[npcIndex].speak();
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.dalixinc.rysnow;
 
+import com.dalixinc.rysnow.entity.Entity;
 import com.dalixinc.rysnow.entity.Player;
 import com.dalixinc.rysnow.object.SuperObject;
 import com.dalixinc.rysnow.tile.TileManager;
@@ -27,7 +28,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int worldHeight = tileSize * maxWorldRow;
 
     // GAME SETTINGS
-    KeyHandler keyHandler = new KeyHandler(this);
+    public KeyHandler keyHandler = new KeyHandler(this);
     Sound music = new Sound();
     Sound sfx = new Sound();
     TileManager tileManager = new TileManager(this);
@@ -39,11 +40,14 @@ public class GamePanel extends JPanel implements Runnable{
     // ENTITY AND OBJECT
     public Player player = new Player(this, keyHandler);
     public SuperObject[] superObjects = new SuperObject[10];
+    public Entity[] npc = new Entity[10];
 
     // GAME STATE
     public int gameState;
-    public static final int PLAY_STATE   = 0;
-    public static final int PAUSE_STATE = 1;
+    public static final int TITLE_STATE = 0;
+    public static final int PLAY_STATE   = 1;
+    public static final int PAUSE_STATE = 2;
+    public static final int DIALOGUE_STATE  = 3;
 
 
     public GamePanel() {
@@ -58,8 +62,9 @@ public class GamePanel extends JPanel implements Runnable{
     public void setUpGame() {
 
         assetSetter.setObjects();
-        playMusic(0);
-        gameState = PLAY_STATE;
+        assetSetter.setNPC();
+        // playMusic(0);
+        gameState = TITLE_STATE;
     }
 
     public void startGameThread() {
@@ -153,7 +158,14 @@ public class GamePanel extends JPanel implements Runnable{
         // Update game state
 
         if (gameState == PLAY_STATE) {
+            // PLAYER
             player.update();
+            // NPC
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[i] != null) {
+                    npc[i].update();
+                }
+            }
         }
         if (gameState == PAUSE_STATE) {
             // Do nothing
@@ -183,40 +195,54 @@ public class GamePanel extends JPanel implements Runnable{
         }
 
 
-        // DRAW TILES
-        tileManager.draw(g2d);
+        // TITLE SCREEN
+        if (gameState == TITLE_STATE) {
+            ui.draw(g2d);
+        }
 
-        //  DRAW OBJECTS
-        for (int i = 0; i < superObjects.length; i++) {
-            if (superObjects[i] != null) {
-                superObjects[i].draw(g2d, this);
+        // OTHERS
+        else {
+            // DRAW TILES
+            tileManager.draw(g2d);
+
+            //  DRAW OBJECTS
+            for (int i = 0; i < superObjects.length; i++) {
+                if (superObjects[i] != null) {
+                    superObjects[i].draw(g2d, this);
+                }
+            }
+
+            // DRAW NPC
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[i] != null) {
+                    npc[i].draw(g2d);
+                }
+            }
+
+            // DRAW PLAYER
+            player.draw(g2d);
+
+            // DRAW UI
+            ui.draw(g2d);
+
+            // DEBUG INFO
+            if (keyHandler.debugToggle == true) {
+
+                long drawEndTime = System.nanoTime();
+                long drawTime = drawEndTime - drawStartTime;
+                g2d.setColor( Color.yellow);
+                g2d.drawString( "Draw Time: " + drawTime / 1_000 + " μs", 10, 440 ); // 1 ms = 1,000 μs
+                System.out.println( "Draw Time: " + drawTime / 1_000 + " μs"); // Divide by 1_000_000  to convert to ms
+                System.out.println( "Draw Time: " + drawTime  + " ns");
+
+                g2d.setColor( Color.WHITE );
+                g2d.drawString( "Player X (Col) : " + player.worldX + " (" + (player.worldX / tileSize + 1) + ")", 10, 260 );
+                g2d.drawString( "Player Y (Row) : " + player.worldY + " (" + (player.worldY / tileSize + 1) + ")", 10, 320 );
+                //.drawString( "Player Row: " + player.worldX, 10, 340 );
+                //g2d.drawString( "Player Col: " + player.screenX, 10, 360 );
+                g2d.drawString( "Player Direction: " + player.direction, 10, 380 );
             }
         }
-
-        // DRAW PLAYER
-        player.draw(g2d);
-
-        // DRAW UI
-        ui.draw(g2d);
-
-        // DEBUG INFO
-        if (keyHandler.debugToggle == true) {
-
-            long drawEndTime = System.nanoTime();
-            long drawTime = drawEndTime - drawStartTime;
-            g2d.setColor( Color.yellow);
-            g2d.drawString( "Draw Time: " + drawTime / 1_000 + " μs", 10, 440 ); // 1 ms = 1,000 μs
-            System.out.println( "Draw Time: " + drawTime / 1_000 + " μs"); // Divide by 1_000_000  to convert to ms
-            System.out.println( "Draw Time: " + drawTime  + " ns");
-
-            g2d.setColor( Color.WHITE );
-            g2d.drawString( "Player X (Col) : " + player.worldX + " (" + (player.worldX / tileSize + 1) + ")", 10, 260 );
-            g2d.drawString( "Player Y (Row) : " + player.worldY + " (" + (player.worldY / tileSize + 1) + ")", 10, 320 );
-            //.drawString( "Player Row: " + player.worldX, 10, 340 );
-            //g2d.drawString( "Player Col: " + player.screenX, 10, 360 );
-            g2d.drawString( "Player Direction: " + player.direction, 10, 380 );
-        }
-
 
         // For Test only
         /*  g2d.setColor( Color.WHITE );
