@@ -44,9 +44,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     // GAME STATE
     public int gameState;
-    public static final int PLAY_STATE   = 0;
-    public static final int PAUSE_STATE = 1;
-    public static final int DIALOGUE_STATE  = 2;
+    public static final int TITLE_STATE = 0;
+    public static final int PLAY_STATE   = 1;
+    public static final int PAUSE_STATE = 2;
+    public static final int DIALOGUE_STATE  = 3;
 
 
     public GamePanel() {
@@ -62,8 +63,8 @@ public class GamePanel extends JPanel implements Runnable{
 
         assetSetter.setObjects();
         assetSetter.setNPC();
-        playMusic(0);
-        gameState = PLAY_STATE;
+        // playMusic(0);
+        gameState = TITLE_STATE;
     }
 
     public void startGameThread() {
@@ -194,47 +195,54 @@ public class GamePanel extends JPanel implements Runnable{
         }
 
 
-        // DRAW TILES
-        tileManager.draw(g2d);
+        // TITLE SCREEN
+        if (gameState == TITLE_STATE) {
+            ui.draw(g2d);
+        }
 
-        //  DRAW OBJECTS
-        for (int i = 0; i < superObjects.length; i++) {
-            if (superObjects[i] != null) {
-                superObjects[i].draw(g2d, this);
+        // OTHERS
+        else {
+            // DRAW TILES
+            tileManager.draw(g2d);
+
+            //  DRAW OBJECTS
+            for (int i = 0; i < superObjects.length; i++) {
+                if (superObjects[i] != null) {
+                    superObjects[i].draw(g2d, this);
+                }
+            }
+
+            // DRAW NPC
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[i] != null) {
+                    npc[i].draw(g2d);
+                }
+            }
+
+            // DRAW PLAYER
+            player.draw(g2d);
+
+            // DRAW UI
+            ui.draw(g2d);
+
+            // DEBUG INFO
+            if (keyHandler.debugToggle == true) {
+
+                long drawEndTime = System.nanoTime();
+                long drawTime = drawEndTime - drawStartTime;
+                g2d.setColor( Color.yellow);
+                g2d.drawString( "Draw Time: " + drawTime / 1_000 + " μs", 10, 440 ); // 1 ms = 1,000 μs
+                System.out.println( "Draw Time: " + drawTime / 1_000 + " μs"); // Divide by 1_000_000  to convert to ms
+                System.out.println( "Draw Time: " + drawTime  + " ns");
+
+                g2d.setColor( Color.WHITE );
+                g2d.drawString( "Player X (Col) : " + player.worldX + " (" + (player.worldX / tileSize + 1) + ")", 10, 260 );
+                g2d.drawString( "Player Y (Row) : " + player.worldY + " (" + (player.worldY / tileSize + 1) + ")", 10, 320 );
+                //.drawString( "Player Row: " + player.worldX, 10, 340 );
+                //g2d.drawString( "Player Col: " + player.screenX, 10, 360 );
+                g2d.drawString( "Player Direction: " + player.direction, 10, 380 );
             }
         }
-
-        // DRAW NPC
-        for (int i = 0; i < npc.length; i++) {
-            if (npc[i] != null) {
-                npc[i].draw(g2d);
-            }
-        }
-
-        // DRAW PLAYER
-        player.draw(g2d);
-
-        // DRAW UI
-        ui.draw(g2d);
-
-        // DEBUG INFO
-        if (keyHandler.debugToggle == true) {
-
-            long drawEndTime = System.nanoTime();
-            long drawTime = drawEndTime - drawStartTime;
-            g2d.setColor( Color.yellow);
-            g2d.drawString( "Draw Time: " + drawTime / 1_000 + " μs", 10, 440 ); // 1 ms = 1,000 μs
-            System.out.println( "Draw Time: " + drawTime / 1_000 + " μs"); // Divide by 1_000_000  to convert to ms
-            System.out.println( "Draw Time: " + drawTime  + " ns");
-
-            g2d.setColor( Color.WHITE );
-            g2d.drawString( "Player X (Col) : " + player.worldX + " (" + (player.worldX / tileSize + 1) + ")", 10, 260 );
-            g2d.drawString( "Player Y (Row) : " + player.worldY + " (" + (player.worldY / tileSize + 1) + ")", 10, 320 );
-            //.drawString( "Player Row: " + player.worldX, 10, 340 );
-            //g2d.drawString( "Player Col: " + player.screenX, 10, 360 );
-            g2d.drawString( "Player Direction: " + player.direction, 10, 380 );
-        }
-
 
         // For Test only
         /*  g2d.setColor( Color.WHITE );

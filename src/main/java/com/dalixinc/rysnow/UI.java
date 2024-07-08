@@ -20,7 +20,11 @@ public class UI {
     public boolean gameOver = false;
     double playTime = 0;
     public String currentDialogue = "";
+    public int inputNum = 0;
     DecimalFormat df = new DecimalFormat("#.##");  // 2 decimal places ("#0.00")
+    private static final int HEADING_SIZE = 80;  // 58
+
+    private static final int MENU_SIZE = 36; // v24
 
     public UI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -56,10 +60,15 @@ public class UI {
         this.g2d = graphics2d;  //TODO: Not certain this is required - either this or we pass around as a method parameter.
 
         //DEFAULT FONT AND COLOUR
-        //graphics2d.setFont(maruMonica);  // previously ariel_40
-        graphics2d.setFont(purisaBold);  // previously ariel_40
+        graphics2d.setFont(maruMonica);  // previously ariel_40
+        //graphics2d.setFont(purisaBold);  // previously ariel_40
         graphics2d.setRenderingHint((RenderingHints.KEY_ANTIALIASING), RenderingHints.VALUE_ANTIALIAS_ON);
         graphics2d.setColor(Color.WHITE);
+
+        // TITLE STATE
+        if (gamePanel.gameState == gamePanel.TITLE_STATE) {
+                drawTitleScreen(graphics2d);
+        }
 
         // PLAY STATE
         if (gamePanel.gameState == gamePanel.PLAY_STATE) {
@@ -74,6 +83,59 @@ public class UI {
             drawDialogueScreen(graphics2d);
         }
 
+    }
+
+    private void drawTitleScreen(Graphics2D graphics2d) {
+
+        graphics2d.setColor(new Color(0x21, 0x4B, 0, 255));
+        graphics2d.fillRect(0, 0, gamePanel.screenWidth, gamePanel.screenHeight);
+
+        // TITLE NAME
+        ///graphics2d.setFont(ariel_80B);
+        graphics2d.setFont(graphics2d.getFont().deriveFont(Font.BOLD, HEADING_SIZE));
+        String text = "AWESOME ADVENTURE";
+        int x = getXforCenteredText(text, graphics2d);
+        int y = gamePanel.tileSize * 3;
+
+        // SHADOW
+        graphics2d.setColor(Color.BLACK);
+        graphics2d.drawString(text, x + 5, y + 5);
+
+        // MAIN COLOUR
+        graphics2d.setColor(Color.WHITE);
+        graphics2d.drawString(text, x, y);
+
+        // TITLE IMAGE
+        x = gamePanel.screenWidth / 2 - gamePanel.tileSize;
+        y = gamePanel.tileSize * 4;
+        graphics2d.drawImage(gamePanel.player.down1, x, y, gamePanel.tileSize * 2, gamePanel.tileSize * 2, null);
+
+        // PRESS ENTER
+        graphics2d.setFont(graphics2d.getFont().deriveFont(Font.BOLD, MENU_SIZE));
+
+        text = "NEW GAME";
+        x = getXforCenteredText(text, graphics2d);
+        y += gamePanel.tileSize * 3.5;
+        graphics2d.drawString(text, x, y);
+        if (inputNum == 0) {
+            graphics2d.drawString(">", x - gamePanel.tileSize, y);
+        }
+
+        text = "LOAD GAME";
+        x = getXforCenteredText(text, graphics2d);
+        y += gamePanel.tileSize;
+        graphics2d.drawString(text, x, y);
+        if (inputNum == 1) {
+            graphics2d.drawString(">", x - gamePanel.tileSize, y);
+        }
+
+        text = "EXIT GAME";
+        x = getXforCenteredText(text, graphics2d);
+        y += gamePanel.tileSize;
+        graphics2d.drawString(text, x, y);
+        if (inputNum == 2) {
+            graphics2d.drawString(">", x - gamePanel.tileSize, y);
+        }
     }
 
     private void drawPlayScreen(Graphics2D graphics2d) {
